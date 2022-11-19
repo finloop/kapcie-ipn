@@ -10,11 +10,11 @@ def get_url_from_user_input(user_input):
     url_and_type_table = []
     for a in soup.select(".hightlight a")[:10]:
         reg = a['href'].split(".")
-        if reg[-1]=="html" or reg[-1]=="pdf" or reg[-1]=="doc":
+        if reg[-1]=="html" or reg[-1]=="pdf":
             url_and_type_table.append([a['href'], reg[-1]])
     for a in soup.select(".res-item a")[:10]:
         reg = a['href'].split(".")
-        if reg[-1]=="html" or reg[-1]=="pdf" or reg[-1]=="doc":
+        if reg[-1]=="html" or reg[-1]=="pdf":
             url_and_type_table.append([a['href'], reg[-1]])
     return url_and_type_table
 
