@@ -22,6 +22,7 @@ def get_content_of_pdf(pdf_path: str) -> list:
     number_of_pages = len(reader.pages)
 
     text = ''
+    max = 2000
 
     for i in range(number_of_pages):
         page = reader.pages[i]
@@ -41,7 +42,7 @@ def get_content_of_pdf(pdf_path: str) -> list:
 
     return text
 
-print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
-
+tekst = get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf')
+print(len(tekst))
 # print(len(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf').split()))
 

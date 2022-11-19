@@ -11,14 +11,20 @@ def download(URL):
     return article
 
 slownik = download("https://zbrodniawolynska.pl/zw1/sledztwa/157,Sledztwo-OKSZpNP-w-Krakowie-w-sprawie-zbrodni-w-Hucie-Pieniackiej.html")
-print(slownik["plain_text"])
-print(slownik["title"])
-print(slownik)
+#print(slownik["plain_text"])
+#print(slownik["title"])
+#print(slownik)
 stringg = ""
+list_of_char = ['-', '*','"',"''"]
+pattern = '['+''.join(list_of_char)+']'
 print(stringg)
 for i in slownik["plain_text"]:
-    stringg += i["text"]
-print(stringg)
+    print(i["text"])
+    strr = i["text"]
+    strr += ". "
+    stringg += strr
+mod_string = re.sub(pattern, '', stringg)
+print(mod_string)
 #print(download('https://kop.ipn.gov.pl/kop/multimed/materialy-audio/relacje-i-wspomnienia/8533,Stanislaw-Ratajski.html'))
 
 '''from urllib.request import urlopen

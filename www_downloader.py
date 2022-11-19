@@ -11,7 +11,7 @@ def download(URL: str) -> dict:
     del (article["date"])
 
     stringg = ''
-
+    maks = 2000
     for dictionary in article['plain_text']:
         stringg =  stringg  + dictionary['text'] 
 
@@ -24,9 +24,11 @@ def download(URL: str) -> dict:
     stringg = stringg + '.'
     stringg = re.sub(r'- ', '', stringg)
     stringg = re.sub(r'\s\s+', ' ', stringg)
-    
+
     return stringg
 
 
 # print(download("https://zbrodniawolynska.pl/zw1/sledztwa/157,Sledztwo-OKSZpNP-w-Krakowie-w-sprawie-zbrodni-w-Hucie-Pieniackiej.html"))
-print(download('https://ipn.gov.pl/pl/upamietnianie/oddzialowe-komitety-opw/komitet-opwim-przy-oddz-2/73888,X-posiedzenie-Komitetu-Ochrony-Pamieci-Walk-i-Meczenstwa-w-Katowicach-27-czerwca.html'))
+tekst = download('https://ipn.gov.pl/pl/upamietnianie/oddzialowe-komitety-opw/komitet-opwim-przy-oddz-2/73888,X-posiedzenie-Komitetu-Ochrony-Pamieci-Walk-i-Meczenstwa-w-Katowicach-27-czerwca.html')
+te = "helikopter"
+print(tekst.rfind(".", beg=0, end=2000))
