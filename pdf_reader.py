@@ -3,14 +3,13 @@ import requests
 import os
 from scrap_url import get_url_from_user_input
 
-links_to_pdfs = get_url_from_user_input('chrobry')
+links_to_pdfs = get_url_from_user_input('stalin')
 # print(links_to_pdfs)
 
 def get_content_of_pdf(pdf_path: str) -> list:
 
     # download pdf
-    response = requests.get(
-        "https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf")
+    response = requests.get(pdf_path)
 
     # make temp pdf file
     file = open("myfile.pdf", "wb")
@@ -32,7 +31,7 @@ def get_content_of_pdf(pdf_path: str) -> list:
 
     return text
 
-# print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
+print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
 
 # print(len(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf').split()))
 
