@@ -46,8 +46,6 @@ def get_content_of_pdf(pdf_path: str) -> list:
 
     return text
 
-print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
-
+# print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
 # print(len(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf').split()))
-
 # print(get_content_of_pdf('https://martyrologiawsipolskich.pl/download/151/170815/Kielecczyzna19391945stratyBROSZURA.doc'))

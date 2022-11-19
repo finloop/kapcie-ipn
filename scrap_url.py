@@ -8,17 +8,14 @@ def get_url_from_user_input(user_input):
     req.encoding = "utf-8"
     soup = BeautifulSoup(req.text, 'html.parser')
     url_and_type_table = []
-    for a in soup.select(".hightlight a")[:10]:
-        reg = a['href'].split(".")
-        if reg[-1]=="html" or reg[-1]=="pdf":
-            url_and_type_table.append([a['href'], reg[-1]])
     for a in soup.select(".res-item a")[:10]:
         reg = a['href'].split(".")
-        if reg[-1]=="html" or reg[-1]=="pdf":
+        if reg[-1]=="html" or reg[-1]=="pdf" or reg[-1]=="docx":
             url_and_type_table.append([a['href'], reg[-1]])
     return url_and_type_table
 
 
-if __name__ == '__main__':
-    what_you_are_looking_for = input("What you are looking for:")
-    print(get_url_from_user_input(what_you_are_looking_for))
+# if __name__ == '__main__':
+#     what_you_are_looking_for = input("What you are looking for:")
+#     print(get_url_from_user_input(what_you_are_looking_for))
+# print(get_url_from_user_input('gierek'))
