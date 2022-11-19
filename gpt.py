@@ -8,6 +8,27 @@ logging.getLogger()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+def summarize_article(text: str) -> str:
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-002",
+            prompt=f"""Podsumuj poniższy tekst w języku polskim.
+
+{text}
+
+""",
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        return response["choices"][0]["text"].strip()
+    except Exception:
+        print("Błąd!")
+        logging.exception("Błąd")
+        return ""
+
 def select_not_empty(data: list[str]) -> list[str]:
     data = list(set(data))
     if "" in data:
@@ -42,7 +63,6 @@ Tekst: {text}
         ]
         return select_not_empty(questions)
     except Exception:
-        print("Błąd!")
         logging.exception("Błąd")
         return []
 
@@ -115,7 +135,7 @@ if __name__ == "__main__":
         wrong_answers[i] = generate_wrong_answers(text=text, question=question)
 
     # Wypisz wyniki
-    print("Skończyłem  🥳🎉 oto wyniki:")
+    print("Skończyłem 🥳🎉 oto wyniki:")
     for i, question in enumerate(questions):
         print(f"{i+1}. {question}")
         print(f"\tPoprawne odpowiedzi:")
