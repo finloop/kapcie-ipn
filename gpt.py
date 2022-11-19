@@ -29,6 +29,7 @@ def summarize_article(text: str) -> str:
         logging.exception("Błąd")
         return ""
 
+
 def select_not_empty(data: list[str]) -> list[str]:
     data = list(set(data))
     if "" in data:
