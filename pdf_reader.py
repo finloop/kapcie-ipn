@@ -1,11 +1,10 @@
 from PyPDF2 import PdfReader
 import requests
 import os
+from scrap_url import get_url_from_user_input
 
-response = requests.get("https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf")
-file = open("myfile.pdf", "wb")
-file.write(response.content)
-file.close()
+links_to_pdfs = get_url_from_user_input('chrobry')
+# print(links_to_pdfs)
 
 def get_content_of_pdf(pdf_path: str) -> list:
 
@@ -33,5 +32,7 @@ def get_content_of_pdf(pdf_path: str) -> list:
 
     return text
 
-print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
+# print(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf'))
+
+# print(len(get_content_of_pdf('https://przystanekhistoria.pl/pa2/tematy/adolf-hitler/43381,Hitler-i-Stalin-zywoty-rownolegle.pdf').split()))
 
