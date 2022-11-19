@@ -2,6 +2,8 @@ import requests
 from readabilipy import simple_json_from_html_string
 import re
 
+character_limit = 2000
+
 def download(URL: str) -> dict:
     req = requests.get(URL)
     article = simple_json_from_html_string(req.text, use_readability=False)
@@ -10,22 +12,26 @@ def download(URL: str) -> dict:
     del (article["byline"])
     del (article["date"])
 
-    stringg = ''
+    text = ''
 
     for dictionary in article['plain_text']:
-        stringg =  stringg  + dictionary['text'] 
+        text =  text  + dictionary['text'] 
 
-    stringg = re.sub(r'["*„”@#$%^&|\\/\=;<>\']', '', stringg)
-    stringg = re.sub(r'[.]{2,}', '', stringg)
-    stringg = re.sub(r'\[\d{1,}\]', '.', stringg)
-    stringg = re.sub(r'–-', '', stringg)
-    stringg = re.sub(r'\n', ' ', stringg)
-    stringg = re.sub(r'\[…\]', ' ', stringg)
-    stringg = stringg + '.'
-    stringg = re.sub(r'- ', '', stringg)
-    stringg = re.sub(r'\s\s+', ' ', stringg)
+    text = re.sub(r'["*„”@#$%^&|\\/\=;<>\']', '', text)
+    text = re.sub(r'[.]{2,}', '', text)
+    text = re.sub(r'\[\d{1,}\]', '.', text)
+    text = re.sub(r'–-', '', text)
+    text = re.sub(r'\n', ' ', text)
+    text = re.sub(r'\[…\]', ' ', text)
+    text = text + '.'
+    text = re.sub(r'- ', '', text)
+    text = re.sub(r'\s\s+', ' ', text)
     
-    return stringg
+    text = text[0: character_limit-1]
+    last_occurence_of_dot = text.rfind('.')
+    text = text[0: last_occurence_of_dot+1]
+
+    return text
 
 
 # print(download("https://zbrodniawolynska.pl/zw1/sledztwa/157,Sledztwo-OKSZpNP-w-Krakowie-w-sprawie-zbrodni-w-Hucie-Pieniackiej.html"))
