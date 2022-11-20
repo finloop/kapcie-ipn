@@ -11,14 +11,14 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 def summarize_article(text: str) -> str:
     try:
         response = openai.Completion.create(
-            model="text-davinci-002",
+            model="text-curie-001",
             prompt=f"""Podsumuj poniższy tekst w języku polskim.
 
 {text}
 
 """,
             temperature=0.7,
-            max_tokens=256,
+            max_tokens=1024,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -31,14 +31,17 @@ def summarize_article(text: str) -> str:
 
 
 def select_not_empty(data: list[str]) -> list[str]:
+    data = [entry.strip() for entry in data]
     data = list(set(data))
     if "" in data:
         data.remove("")
+    if " " in data:
+        data.remove(" ")
     return data
 
 
 def trim_answer(answer: str) -> str:
-    reg = r"\d[.)]\s"
+    reg = r"\s*\d[.)]\s+"
     if re.match(reg, answer):
         answer = answer[3:]
     return answer
@@ -75,7 +78,7 @@ def generate_correct_answers(text: str, question: str) -> list[str]:
             prompt=f"""Tekst: {text}
 Pytanie: {question}
 
-Podaj 3 poprawne odpowiedzi na powyższe pytanie.
+Podaj 4 poprawne odpowiedzi na powyższe pytanie.
 
     """,
             temperature=0.7,
@@ -99,7 +102,7 @@ def generate_wrong_answers(text: str, question: str) -> list[str]:
             prompt=f"""Tekst: {text}
 Pytanie: {question}
 
-Podaj trzy niepoprawne odpowiedzi.
+Podaj cztery niepoprawne odpowiedzi.
 
     """,
             temperature=0.7,
