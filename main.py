@@ -81,6 +81,7 @@ if authentication_status:
                 if "questions" not in st.session_state:
                     st.session_state.questions = []
                 st.session_state.questions += questions
+                st.session_state.input_type = "url"
             else:
                 # Handle search
                 if "input_type" in st.session_state and st.session_state.input_type == "search":
@@ -93,10 +94,9 @@ if authentication_status:
         st.write("Przeszukujemy bazę danych szukaj.ipn.gov.pl. Wybierz linki, z których mamy pobrać tekst:")
         urls = [u[0] for u in get_url_from_user_input(user_input)]
         urls = list(set(urls))
-        checkboxes = [st.checkbox(u) for u in urls]
-        st.session_state.text  = user_input
-        st.write("Po wybraniu artykułów kliknij ponownie Wygeneruj pytania")
-
+        st.write("Po wybraniu artykułów skopiuj link do wyszukiwarki.")
+        for url in urls:
+            st.write(url)
 
 
     if "questions" in st.session_state:
