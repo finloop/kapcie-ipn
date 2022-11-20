@@ -1,4 +1,3 @@
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
 
@@ -17,8 +16,3 @@ def get_url_from_user_input(user_input):
         if reg[-1]=="html" or reg[-1]=="pdf":
             url_and_type_table.append([a['href'], reg[-1]])
     return url_and_type_table
-
-
-if __name__ == '__main__':
-    what_you_are_looking_for = input("What you are looking for:")
-    print(get_url_from_user_input(what_you_are_looking_for))
