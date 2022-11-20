@@ -1,5 +1,12 @@
+fpdf
+python-docx
+numpy
+fpdf
+streamlit
+streamlit-authenticator
+PyYAML
 requests
 PyPDF2
 readabilipy
-bs4
+beautifulsoup4
 openai
