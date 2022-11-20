@@ -1,0 +1,9 @@
+fpdf
+docx
+numpy
+docx.shared
+fpdf
+streamlit
+gpt
+streamlit_authenticator
+yaml
