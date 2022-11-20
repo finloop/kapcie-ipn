@@ -46,7 +46,7 @@ def trim_answer(answer: str) -> str:
 def generate_questions(text: str) -> list[str]:
     try:
         response = openai.Completion.create(
-            model="text-curie-001",
+            model="text-davinci-002",
             prompt=f"""Dla podanego tekstu napisz 6 pytań.
 Tekst: {text}
 
@@ -70,7 +70,7 @@ Tekst: {text}
 def generate_correct_answers(text: str, question: str) -> list[str]:
     try:
         response = openai.Completion.create(
-            model="text-curie-001",
+            model="text-davinci-002",
             prompt=f"""Tekst: {text}
 Pytanie: {question}
 
@@ -94,7 +94,7 @@ Podaj 3 poprawne odpowiedzi na powyższe pytanie.
 def generate_wrong_answers(text: str, question: str) -> list[str]:
     try:
         response = openai.Completion.create(
-            model="text-curie-001",
+            model="text-davinci-002",
             prompt=f"""Tekst: {text}
 Pytanie: {question}
 
