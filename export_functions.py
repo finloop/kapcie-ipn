@@ -1,3 +1,7 @@
+# pip install fpdf
+# pip install docx
+# pip install numpy
+
 from fpdf import FPDF
 from docx import Document
 import numpy as np
@@ -14,13 +18,13 @@ def write_docx(json_data, output_filename, highlight_correct=False):
 
         p = document.add_paragraph(json_data[key_idx]['Question'])
 
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
+        random_correct = json_data[key_idx]['Correct_answers']
 
-        answers = np.random.choice(np.append(random_correct[0], json_data[key_idx]['False_answers'][:3]),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
+        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers'][:(4 - len(random_correct))]),
+                                   np.clip(len(json_data[key_idx]['False_answers']) + len(random_correct), 0, 4), replace=False)
 
         for i, answer in enumerate(answers):
-            if highlight_correct and (answer == random_correct[0]):
+            if np.isin(answer, random_correct) and highlight_correct:
                 run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
                 run.font.color.rgb = RGBColor(0x00, 0xFF, 0x00)
             else:
@@ -45,24 +49,61 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
 
     for key_idx in json_data.keys():
         pdf.set_font("Arial", size=15)
-        pdf.cell(200, 10, txt=pdf.normalize_text(json_data[key_idx]['Question']).encode('latin-1', 'ignore').decode('latin-1'),
+        pdf.cell(200, 10, txt=pdf.normalize_text(json_data[key_idx]['Question'].encode('latin-1', 'ignore').decode('latin-1', 'ignore')),
                  ln=2, align='L')
 
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
+        random_correct = json_data[key_idx]['Correct_answers']
 
-        answers = np.random.choice(np.append(random_correct[0], json_data[key_idx]['False_answers'][:3]),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
+        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers'][:(4 - len(random_correct))]),
+                                   np.clip(len(json_data[key_idx]['False_answers']) + len(random_correct), 0, 4), replace=False)
 
         pdf.set_font("Arial", size=10)
         for i, answer in enumerate(answers):
-            if answer == random_correct[0] and highlight_correct:
+            if np.isin(answer, random_correct) and highlight_correct:
                 pdf.set_text_color(0, 255, 0)
-                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1')}"),
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1', 'ignore')}"),
                          ln=2, align='L')
                 pdf.set_text_color(0, 0, 0)
             else:
-                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1')}"),
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1', 'ignore')}"),
                          ln=2, align='L')
     pdf_fname = output_filename + '.pdf'
 
-    pdf.output(pdf_fname, 'F')
+    pdf.output(pdf_fname)
+
+
+if __name__ == '__main__':
+
+    """
+    sample_dict = {'1': {'Question': "Testowe pytanie?",
+                         'Correct_answers': ["Poprawna :)"],
+                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
+                   '2': {'Question': "Testowe pytanie 2?",
+                         'Correct_answers': ["Poprawna :)"],
+                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
+                   '3': {'Question': "Testowe pytanie 3?",
+                         'Correct_answers': ["Tak"],
+                         'False_answers': ["Nie"]}
+
+                   }
+    """
+
+    sample_dict = {1: {'Question': 'W jakim czasie zakończyła się II wojna światowa? ',
+                       'Correct_answers': ['1949, 1955, 1979.'],
+                       'False_answers': ['2 września 1945 roku – kapitulacja Japonii.', '9 maja 1945 roku – wejście w życie aktu bezwarunkowej kapitulacji III Rzeszy.', '8 maja 1945 roku – podpisanie aktu bezwarunkowej kapitulacji III Rzeszy.']},
+                   2: {'Question': 'Czy była to jedna wielka wojna?', 'Correct_answers': ['Wojna była wielką, ale nie jedną wielką wojną.', 'Wojna była wielką, ale nie jedną wielką wojną ojczyźnianą.', 'Wojna była wielką, ale nie jedną wielką wojną światową.'],
+                       'False_answers': ['      ', 'była to jedna wielka wojna, ale liczba stron miała inną skalę.', 'była to jedna wielka wojna, ale różnice w liczebnościach żołnierzy i ofiar były duże;', 'była to jedna wielka wojna, choć podział na strony miał inną skalę;']},
+                   3: {'Question': 'Jaką liczbę ludzi zginęło w II wojnie światowej? ', 'Correct_answers': [' 1,7 mln ludzi zginęło w II wojnie światowej.', '2,0 mln ludzi zginęło w II wojnie światowej.', '3,0 mln ludzi zginęło w II wojnie światowej.'],
+                       'False_answers': ['Odpowiedź 2:', '  Wszystkie szacunki na ten temat są nieprawdziwe.', 'Odpowiedź 3:', 'Według szacunków zginęło w niej od 50 do 78 milionów ludzi.', 'Odpowiedź 1:']},
+                   4: {'Question': 'Czy wojna była trwała dwukrotnie w Europie? ', 'Correct_answers': ['Tak, wojna trwała dwukrotnie w Europie.', 'Tak, wojna była trwała dwukrotnie w Europie.'],
+                       'False_answers': ['     ', 'Według różnych szacunków zginęło w niej od 50[2] do 78[3] milionów ludzi.']},
+                   5: {'Question': 'Jaką rolę wojennej w II wojnie światowej odgrywała Europa? ',
+                       'Correct_answers': [' Europa była głównym obszarem działań wojennych w II wojnie światowej. Wojna objęła prawie całą Europę, wschodnią i południowo-wschodnią Azję, północną Afrykę, część Bliskiego Wschodu, wyspy Oceanii i wszystkie oceany. Do walki przystąpiło 1,7 mld ludzi.'],
+                       'False_answers': ['Europa była głównym częścią obszaru działań wojennych wojny.', '  1. Europa była jednym z głównych obszarów działań wojennych wojny.', 'Europa była głównym stroną konfliktu.']},
+                   6: {'Question': 'Czy zginęło w niej wszystkich, czy tylko część ludzi? ',
+                       'Correct_answers': ['Wszystkich zginęło.', 'Część ludzi zginęła, ale wszystkich nie zabiła. ', ' Część ludzi zginęła, ale wszystkich nie zabiła. '],
+                       'False_answers': [' 1. Według różnych szacunków zginęło w niej od 50[2] do 78[3] milionów ludzi.', 'Według różnych szacunków zginęło w niej od 50[2] do 78[3] milionów ludzi.']}}
+
+
+    write_docx(sample_dict, '2', highlight_correct=True)
+    write_pdf(sample_dict, '2', highlight_correct=True)

@@ -11,6 +11,8 @@ import yaml
 from urllib.parse import urlparse
 from www_downloader import download
 from scrap_url import get_url_from_user_input
+from export_functions import *
+import streamlit_ext as sxt
 
 def is_url(url):
     try:
@@ -119,6 +121,22 @@ if authentication_status:
             st.write("Skończyłem 🥳🎉 oto wyniki. Możesz je zapisać jako PDF lub DOCX.")
             
             # TODO: Download buttons
+
+            sample_dict = {}
+            for i, question in enumerate(st.session_state.questions):
+                sample_dict[i+1] = {'Question': question,
+                                'Correct_answers': correct_answers[i],
+                                'False_answers': wrong_answers[i]}
+            # print(sample_dict)
+            write_docx(sample_dict, 'pytania', highlight_correct=True)
+            write_pdf(sample_dict, 'pytania1', highlight_correct=True)
+
+            with open('pytania1.pdf', "rb") as f:
+                sxt.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania1.pdf')
+
+            with open('pytania.docx', "rb") as f:
+                sxt.download_button('Eksport pytań do pliku docx.', data=f, file_name='pytania.docx')
+
 
             st.write("# Pytania i odpowiedzi")
             for i, question in enumerate(st.session_state.questions):
