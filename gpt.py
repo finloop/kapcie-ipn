@@ -5,8 +5,7 @@ import re
 
 logging.getLogger()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
+openai.api_key = 'api-key'
 
 def summarize_article(text: str) -> str:
     try:
