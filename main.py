@@ -58,6 +58,8 @@ if authentication_status:
     st.write("# QuickQuiz")
     st.write(f"Zalogowano jako: *{name}*")
 
+    st.write("Generator quizów dla nauczycieli by Kapcie")
+
     user_input = st.text_area(
         "Tekst",
         placeholder="Wpisz hasło, temat, link lub fragment tekstu",
