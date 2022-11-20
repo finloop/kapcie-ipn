@@ -3,10 +3,9 @@
 Here's our first attempt at using data to create a table:
 """
 
-from fpdf import FPDF
-from docx import Document
+
+
 import numpy as np
-from docx.shared import RGBColor
 import fpdf
 import streamlit as st
 from gpt import *
@@ -14,20 +13,6 @@ import streamlit_authenticator as stauth
 import yaml
 
 # from export_functions import write_docx, write_pdf
-
-### to delete!
-sample_dict = {'1': {'Question': "Testowe pytanie?",
-                         'Correct_answers': ["Poprawna :)"],
-                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-                   '2': {'Question': "Testowe pytanie 2?",
-                         'Correct_answers': ["Poprawna :)"],
-                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-                   '3': {'Question': "Testowe pytanie 3?",
-                         'Correct_answers': ["Tak"],
-                         'False_answers': ["Nie"]}
-
-                   }
-### to delete!!!
 
 def download_summarized_article(text: str) -> str:
     article = ""
@@ -96,7 +81,3 @@ elif authentication_status == False:
     st.error('Username/password is incorrect')
 elif authentication_status == None:
     st.warning('Please enter your username and password')
-
-
-    
-
