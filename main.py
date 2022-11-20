@@ -10,6 +10,7 @@ import streamlit_authenticator as stauth
 import yaml
 from urllib.parse import urlparse
 from www_downloader import download
+from scrap_url import get_url_from_user_input
 
 def is_url(url):
     try:
@@ -82,8 +83,21 @@ if authentication_status:
                 st.session_state.questions += questions
             else:
                 # Handle search
-                st.session_state.text  = user_input
+                if "input_type" in st.session_state and st.session_state.input_type == "search":
+                    # Process checkboxes
+                    st.write("Processing checkboxes.")
+                st.session_state.input_type = "search"
+
     
+    if "input_type" in st.session_state and st.session_state.input_type == "search":
+        st.write("Przeszukujemy bazę danych szukaj.ipn.gov.pl. Wybierz linki, z których mamy pobrać tekst:")
+        urls = [u[0] for u in get_url_from_user_input(user_input)]
+        urls = list(set(urls))
+        checkboxes = [st.checkbox(u) for u in urls]
+        st.session_state.text  = user_input
+        st.write("Po wybraniu artykułów kliknij ponownie Wygeneruj pytania")
+
+
 
     if "questions" in st.session_state:
         questions_area = st.text_area(label="Zredaguj pytania lub dodaj własne. Możesz też wygenerować dodatkowe pytania. Każde pytanie pisz w nowej linii.", value="\n".join(st.session_state.questions), height=200)
