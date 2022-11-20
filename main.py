@@ -50,6 +50,8 @@ authenticator = stauth.Authenticate(
 )
 name, authentication_status, username = authenticator.login("Login", "main")
 
+st.write("Login: jsmith")
+st.write("Hasło: 123")
 
 if authentication_status:
     authenticator.logout("Logout", "main")
