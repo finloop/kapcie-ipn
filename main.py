@@ -14,7 +14,7 @@ from scrap_url import get_url_from_user_input
 from export_functions import *
 import streamlit_ext as sxt
 
-st.title("QuickQuiz")
+st.set_page_config(page_title="QuickQuiz")
 
 def is_url(url):
     try:
