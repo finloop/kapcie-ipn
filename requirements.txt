@@ -10,3 +10,4 @@ PyPDF2
 readabilipy
 beautifulsoup4
 openai
+streamlit-ext
