@@ -6,6 +6,7 @@ from fpdf import FPDF
 from docx import Document
 import numpy as np
 from docx.shared import RGBColor
+import codecs
 import fpdf
 
 
@@ -14,7 +15,12 @@ def write_docx(json_data, output_filename, highlight_correct=False):
     document = Document()
     ans_idxes = ['a', 'b', 'c', 'd']
 
+    unique_sources = []
+
     for key_idx in json_data.keys():
+
+        if np.isin('source', json_data[key_idx].keys()):
+            unique_sources.append(json_data[key_idx]['source'])
 
         p = document.add_paragraph(json_data[key_idx]['Question'])
 
@@ -30,7 +36,16 @@ def write_docx(json_data, output_filename, highlight_correct=False):
             else:
                 run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
                 run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
+    p = document.add_paragraph('Źródła')
+    unique_sources = np.unique(unique_sources)
+
+    for source in unique_sources:
+        p.add_run(f'\n\t{source}')
+
     document.add_page_break()
+
+
 
     docx_fname = output_filename + '.docx'
 
@@ -47,9 +62,15 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
 
     pdf.set_font("Arial", size=15)
 
+    unique_sources = []
+
     for key_idx in json_data.keys():
+
+        if np.isin('source', json_data[key_idx].keys()):
+            unique_sources.append(json_data[key_idx]['source'])
+
         pdf.set_font("Arial", size=15)
-        pdf.cell(200, 10, txt=pdf.normalize_text(json_data[key_idx]['Question']),
+        pdf.cell(200, 10, txt=pdf.normalize_text(json_data[key_idx]['Question'].encode('latin-1', 'ignore').decode('latin-1')),
                  ln=2, align='L')
 
         random_correct = json_data[key_idx]['Correct_answers']
@@ -61,12 +82,19 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
         for i, answer in enumerate(answers):
             if np.isin(answer, random_correct) and highlight_correct:
                 pdf.set_text_color(0, 255, 0)
-                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer}"),
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1', 'ignore')}"),
                          ln=2, align='L')
                 pdf.set_text_color(0, 0, 0)
             else:
-                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer}"),
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1', 'ignore')}"),
                          ln=2, align='L')
+
+    unique_sources = np.unique(unique_sources)
+
+    pdf.cell(200, 10, txt="Zródła".encode('latin-1', 'ignore').decode('latin-1', 'ignore'), ln=2, align='C')
+    for source in unique_sources:
+        pdf.cell(40, 7, txt=source.encode('latin-1', 'ignore').decode('latin-1', 'ignore'), ln=2, align='L')
+
     pdf_fname = output_filename + '.pdf'
 
     pdf.output(pdf_fname)
