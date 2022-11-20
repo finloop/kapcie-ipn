@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    jsmith:
+      email: jsmith@gmail.com
+      name: John Smith
+      password: '$2b$12$A8jnSUwLM4yuqCWBG6uq9ejjO4z3FPQ7esIkBZpzRenxdceYXQcum' # To be replaced with hashed password
+    rbriggs:
+      email: rbriggs@gmail.com
+      name: Rebecca Briggs
+      password: '$2b$12$QIFHjYlA.RYq96nYr4vJw.wDXVitNf86.Opn6ZqMJ8MxLnT4h0YTm' # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - melsby@gmail.com
