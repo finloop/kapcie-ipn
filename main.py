@@ -8,77 +8,11 @@ from docx import Document
 import numpy as np
 from docx.shared import RGBColor
 import fpdf
-
-
-def write_docx(json_data, output_filename, highlight_correct=False):
-
-    document = Document()
-    ans_idxes = ['a', 'b', 'c', 'd']
-
-    for key_idx in json_data.keys():
-
-        p = document.add_paragraph(json_data[key_idx]['Question'])
-
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
-
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
-
-        for i, answer in enumerate(answers):
-            if highlight_correct and (answer == random_correct[0]):
-                run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
-                run.font.color.rgb = RGBColor(0x00, 0xFF, 0x00)
-            else:
-                run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
-                run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-    document.add_page_break()
-
-    docx_fname = output_filename + '.docx'
-
-    document.save(docx_fname)
-
-    
-
-
-def write_pdf(json_data, output_filename, highlight_correct=False):
-
-    pdf = FPDF()
-
-    ans_idxes = ['a', 'b', 'c', 'd']
-
-    pdf.add_page()
-
-    pdf.set_font("Arial", size=15)
-
-    help(pdf.set_font)
-    help(fpdf.fpdf.FPDF)
-
-    for key_idx in json_data.keys():
-        pdf.set_font("Arial", size=15)
-        pdf.cell(200, 10, txt=json_data[key_idx]['Question'],
-                 ln=2, align='L')
-
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
-
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
-
-        pdf.set_font("Arial", size=10)
-        for i, answer in enumerate(answers):
-            if answer == random_correct[0] and highlight_correct:
-                pdf.set_text_color(0, 255, 0)
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
-                         ln=2, align='L')
-                pdf.set_text_color(0, 0, 0)
-            else:
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
-                         ln=2, align='L')
-    pdf_fname = output_filename + '.pdf'
-
-    pdf.output(pdf_fname)
-
 import streamlit as st
 from gpt import *
+import streamlit_authenticator as stauth
+import yaml
+
 # from export_functions import write_docx, write_pdf
 
 ### to delete!
@@ -103,45 +37,22 @@ def download_summarized_article(text: str) -> str:
 
 # streamlit_app.py
 
+with open('.streamlit/config.yaml') as file:
+    config = yaml.load(file, Loader=stauth.SafeLoader)
 
-def check_password():
-    """Returns `True` if the user had a correct password."""
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+name, authentication_status, username = authenticator.login('Login', 'main')
+
+if authentication_status:
+    authenticator.logout('Logout', 'main')
+    st.write(f'Welcome *{name}*')
     
-    def password_entered():
-        """Checks whether a password entered by the user is correct."""
-        if (
-            st.session_state["username"] in st.secrets["passwords"]
-            and st.session_state["password"]
-            == st.secrets["passwords"][st.session_state["username"]]
-        ):
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # don't store username + password
-            del st.session_state["username"]
-        else:
-            st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        # First run, show inputs for username + password.
-        st.text_input("Username", on_change=password_entered, key="username")
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        return False
-    elif not st.session_state["password_correct"]:
-        # Password not correct, show input + error.
-        st.text_input("Username", on_change=password_entered, key="username")
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        st.error("😕 User not known or password incorrect")
-  
-        return False
-    else:
-        # Password correct.    
-        return True
-    
-if check_password():
-
     st.write("# QuickQuiz")
     user_input = st.text_area("Tekst",placeholder="Wpisz tekst do wygenerowania quizu", label_visibility="hidden")
 
@@ -174,84 +85,18 @@ if check_password():
                     st.write(f"\t{j+1}. {ans}")
 
     if st.button('Eksport pytań do pliku pdf.'):
-        write_pdf(sample_dict, '2', highlight_correct=True)
+        # write_pdf(sample_dict, '2', highlight_correct=True)
         st.write('Wygenerowano plik pdf.')
 
     if st.button('Eksport pytań do pliku docx.'):
-        write_docx(sample_dict, '2', highlight_correct=True)
+        # write_docx(sample_dict, '2', highlight_correct=True)
         st.write('Wygenerowano plik docx.')
 
+elif authentication_status == False:
+    st.error('Username/password is incorrect')
+elif authentication_status == None:
+    st.warning('Please enter your username and password')
 
-from fpdf import FPDF
-from docx import Document
-import numpy as np
-from docx.shared import RGBColor
-import fpdf
-
-
-def write_docx(json_data, output_filename, highlight_correct=False):
-
-    document = Document()
-    ans_idxes = ['a', 'b', 'c', 'd']
-
-    for key_idx in json_data.keys():
-
-        p = document.add_paragraph(json_data[key_idx]['Question'])
-
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
-
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
-
-        for i, answer in enumerate(answers):
-            if highlight_correct and (answer == random_correct[0]):
-                run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
-                run.font.color.rgb = RGBColor(0x00, 0xFF, 0x00)
-            else:
-                run = p.add_run(f'\n\t{ans_idxes[i]}) {answer}')
-                run.font.color.rgb = RGBColor(0x00, 0x00, 0x00)
-    document.add_page_break()
-
-    docx_fname = output_filename + '.docx'
-
-    document.save(docx_fname)
 
     
 
-
-def write_pdf(json_data, output_filename, highlight_correct=False):
-
-    pdf = FPDF()
-
-    ans_idxes = ['a', 'b', 'c', 'd']
-
-    pdf.add_page()
-
-    pdf.set_font("Arial", size=15)
-
-    help(pdf.set_font)
-    help(fpdf.fpdf.FPDF)
-
-    for key_idx in json_data.keys():
-        pdf.set_font("Arial", size=15)
-        pdf.cell(200, 10, txt=json_data[key_idx]['Question'],
-                 ln=2, align='L')
-
-        random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
-
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
-                                   np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
-
-        pdf.set_font("Arial", size=10)
-        for i, answer in enumerate(answers):
-            if answer == random_correct[0] and highlight_correct:
-                pdf.set_text_color(0, 255, 0)
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
-                         ln=2, align='L')
-                pdf.set_text_color(0, 0, 0)
-            else:
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
-                         ln=2, align='L')
-    pdf_fname = output_filename + '.pdf'
-
-    pdf.output(pdf_fname)
