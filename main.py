@@ -2,16 +2,29 @@
 # My first app
 Here's our first attempt at using data to create a table:
 """
-
-
-
-import numpy as np
-import fpdf
 import streamlit as st
 from gpt import *
 import streamlit_authenticator as stauth
 import yaml
+from export_functions import write_pdf, write_docx
+import streamlit_ext as ste
 
+import pandas as pd
+
+data = {
+    "calories": [420, 380, 390],
+    "duration": [50, 40, 45]
+    }
+
+    #load data into a DataFrame object:
+df = pd.DataFrame(data)
+
+@st.cache
+def convert_df(df):
+            # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
+
+csv = convert_df(df)
 # from export_functions import write_docx, write_pdf
 
 def download_summarized_article(text: str) -> str:
@@ -69,13 +82,25 @@ if authentication_status:
                 for j, ans in enumerate(wrong_answers[i]):
                     st.write(f"\t{j+1}. {ans}")
 
-    if st.button('Eksport pytań do pliku pdf.'):
-        # write_pdf(sample_dict, '2', highlight_correct=True)
-        st.write('Wygenerowano plik pdf.')
+        sample_dict = {}
+        for i, question in enumerate(questions):
+            sample_dict[i+1] = {'Question': question,
+                            'Correct_answers': correct_answers[i],
+                            'False_answers': wrong_answers[i]}
+       
+        write_docx(sample_dict, 'pytania', highlight_correct=True)
+        write_pdf(sample_dict, 'pytania1', highlight_correct=True)
 
-    if st.button('Eksport pytań do pliku docx.'):
-        # write_docx(sample_dict, '2', highlight_correct=True)
-        st.write('Wygenerowano plik docx.')
+        with open('pytania.pdf', "rb") as f:
+            ste.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania.pdf')
+
+        with open('pytania.docx', "rb") as f:
+            ste.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania.docx')
+
+#    st.download_button('Download CSV', f)
+#         ste.download_button('Eksport pytań do pliku pdf.', data=write_pdf(sample_dict, '2', highlight_correct=True), file_name='pytania.pdf')
+
+#         ste.download_button('Eksport pytań do pliku docx.', data=write_docx(sample_dict, '2', highlight_correct=True), file_name='pytania.docx')    
 
 elif authentication_status == False:
     st.error('Username/password is incorrect')

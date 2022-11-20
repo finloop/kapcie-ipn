@@ -47,9 +47,6 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
 
     pdf.set_font("Arial", size=15)
 
-    help(pdf.set_font)
-    help(fpdf.fpdf.FPDF)
-
     for key_idx in json_data.keys():
         pdf.set_font("Arial", size=15)
         pdf.cell(200, 10, txt=json_data[key_idx]['Question'],
@@ -73,21 +70,23 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
     pdf_fname = output_filename + '.pdf'
 
     pdf.output(pdf_fname)
+    
+   
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    sample_dict = {'1': {'Question': "Testowe pytanie?",
-                         'Correct_answers': ["Poprawna :)"],
-                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-                   '2': {'Question': "Testowe pytanie 2?",
-                         'Correct_answers': ["Poprawna :)"],
-                         'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-                   '3': {'Question': "Testowe pytanie 3?",
-                         'Correct_answers': ["Tak"],
-                         'False_answers': ["Nie"]}
+#     sample_dict = {'1': {'Question': "Testowe pytanie?",
+#                          'Correct_answers': ["Poprawna :)"],
+#                          'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
+#                    '2': {'Question': "Testowe pytanie 2?",
+#                          'Correct_answers': ["Poprawna :)"],
+#                          'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
+#                    '3': {'Question': "Testowe pytanie 3?",
+#                          'Correct_answers': ["Tak"],
+#                          'False_answers': ["Nie"]}
 
-                   }
+#                    }
 
-    write_docx(sample_dict, '2', highlight_correct=True)
-    write_pdf(sample_dict, '2', highlight_correct=True)
+    # write_docx(sample_dict, 'pytania.docx', highlight_correct=True)
+    # write_pdf(sample_dict, 'pytania.pdf', highlight_correct=True)
