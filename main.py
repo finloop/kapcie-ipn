@@ -8,6 +8,15 @@ import streamlit as st
 from gpt import *
 import streamlit_authenticator as stauth
 import yaml
+from urllib.parse import urlparse
+from www_downloader import download
+
+def is_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
 
 
 def download_summarized_article(text: str) -> str:
@@ -15,6 +24,15 @@ def download_summarized_article(text: str) -> str:
     with st.spinner("Skracanie tekstu..."):
         article = summarize_article(text=text)
     return article
+
+def get_questions_single(text: str):
+    # Wygeneruj pytania
+    with st.spinner("Generuję pytania. Proszę czekać 🤔"):
+        questions = generate_questions(text=text)
+        st.write("Mam! 😋 Oto one: ")
+        #for i, question in enumerate(questions):
+        #    st.write(f"**{i+1}. {question.strip()}**")
+        return questions
 
 
 with open(".streamlit/config.yaml") as file:
@@ -44,27 +62,31 @@ if authentication_status:
 
     user_input = user_input.strip()
     if generate_new_questions:
-        if len(user_input) > 100:
+        if len(user_input) > 200:
             st.session_state.input_type = "text"
-
-            def get_questions_single(text: str):
-                # Wygeneruj pytania
-                with st.spinner("Generuję pytania. Proszę czekać 🤔"):
-                    questions = generate_questions(text=text)
-                    st.write("Mam! 😋 Oto one: ")
-                    #for i, question in enumerate(questions):
-                    #    st.write(f"**{i+1}. {question.strip()}**")
-                    return questions
-
+            st.session_state.text = user_input
             questions = get_questions_single(user_input)
 
             if "questions" not in st.session_state:
                 st.session_state.questions = []
             st.session_state.questions += questions
+        elif len(user_input) > 0:
+            # Check if it is a URL
+            if is_url(user_input):
+                st.session_state.text  = download(URL=user_input)
+                st.write(f"**Taki tekst odnalazłem na podanej stronie**: {st.session_state.text}")
+                questions = get_questions_single(text=str(st.session_state.text))
+
+                if "questions" not in st.session_state:
+                    st.session_state.questions = []
+                st.session_state.questions += questions
+            else:
+                # Handle search
+                st.session_state.text  = user_input
     
 
     if "questions" in st.session_state:
-        questions_area = st.text_area(label="Zredaguj pytania lub dodaj własne. Możesz też wygenerować dodatkowe pytania.", value="\n".join(st.session_state.questions), height=200)
+        questions_area = st.text_area(label="Zredaguj pytania lub dodaj własne. Możesz też wygenerować dodatkowe pytania. Każde pytanie pisz w nowej linii.", value="\n".join(st.session_state.questions), height=200)
         st.session_state.questions = questions_area.split("\n")
         st.write("Gdy już skończysz, kliknij \"Wygeneruj odpowiedzi\"")
 
@@ -75,9 +97,9 @@ if authentication_status:
             with st.spinner("Generuję odpowiedzi 🏃🏼‍♂️🏃🏼‍♂️🏃🏼‍♂️"):
                 for i, question in enumerate(st.session_state.questions):
                     correct_answers[i] = generate_correct_answers(
-                        text=user_input, question=question
+                        text=st.session_state.text , question=question
                     )
-                    wrong_answers[i] = generate_wrong_answers(text=user_input, question=question)
+                    wrong_answers[i] = generate_wrong_answers(text=st.session_state.text , question=question)
 
             # Wypisz wyniki
             st.write("Skończyłem 🥳🎉 oto wyniki. Możesz je zapisać jako PDF lub DOCX.")

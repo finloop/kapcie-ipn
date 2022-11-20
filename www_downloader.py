@@ -2,7 +2,7 @@ import requests
 from readabilipy import simple_json_from_html_string
 import re
 
-character_limit = 2000
+character_limit = 3000
 
 def download(URL: str) -> dict:
     req = requests.get(URL)
