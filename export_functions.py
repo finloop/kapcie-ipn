@@ -1,7 +1,3 @@
-# pip install fpdf
-# pip install docx
-# pip install numpy
-
 from fpdf import FPDF
 from docx import Document
 import numpy as np
@@ -20,7 +16,7 @@ def write_docx(json_data, output_filename, highlight_correct=False):
 
         random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
 
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
+        answers = np.random.choice(np.append(random_correct[0], json_data[key_idx]['False_answers'][:3]),
                                    np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
 
         for i, answer in enumerate(answers):
@@ -49,44 +45,24 @@ def write_pdf(json_data, output_filename, highlight_correct=False):
 
     for key_idx in json_data.keys():
         pdf.set_font("Arial", size=15)
-        pdf.cell(200, 10, txt=json_data[key_idx]['Question'],
+        pdf.cell(200, 10, txt=pdf.normalize_text(json_data[key_idx]['Question']).encode('latin-1', 'ignore').decode('latin-1'),
                  ln=2, align='L')
 
         random_correct = [np.random.choice(json_data[key_idx]['Correct_answers'])]
 
-        answers = np.random.choice(np.append(random_correct, json_data[key_idx]['False_answers']),
+        answers = np.random.choice(np.append(random_correct[0], json_data[key_idx]['False_answers'][:3]),
                                    np.clip(len(json_data[key_idx]['False_answers']) + 1, 2, 4), replace=False)
 
         pdf.set_font("Arial", size=10)
         for i, answer in enumerate(answers):
             if answer == random_correct[0] and highlight_correct:
                 pdf.set_text_color(0, 255, 0)
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1')}"),
                          ln=2, align='L')
                 pdf.set_text_color(0, 0, 0)
             else:
-                pdf.cell(40, 7, txt=f'\n{ans_idxes[i]}) {answer}',
+                pdf.cell(40, 7, txt=pdf.normalize_text(f"\n{ans_idxes[i]}) {answer.encode('latin-1', 'ignore').decode('latin-1')}"),
                          ln=2, align='L')
     pdf_fname = output_filename + '.pdf'
 
-    pdf.output(pdf_fname)
-    
-   
-
-
-# if __name__ == '__main__':
-
-#     sample_dict = {'1': {'Question': "Testowe pytanie?",
-#                          'Correct_answers': ["Poprawna :)"],
-#                          'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-#                    '2': {'Question': "Testowe pytanie 2?",
-#                          'Correct_answers': ["Poprawna :)"],
-#                          'False_answers': ["Nie poprawna 1", "Nie poprawna 2", "Nie poprawna 3"]},
-#                    '3': {'Question': "Testowe pytanie 3?",
-#                          'Correct_answers': ["Tak"],
-#                          'False_answers': ["Nie"]}
-
-#                    }
-
-    # write_docx(sample_dict, 'pytania.docx', highlight_correct=True)
-    # write_pdf(sample_dict, 'pytania.pdf', highlight_correct=True)
+    pdf.output(pdf_fname, 'F')

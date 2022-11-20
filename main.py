@@ -9,23 +9,6 @@ import yaml
 from export_functions import write_pdf, write_docx
 import streamlit_ext as ste
 
-import pandas as pd
-
-data = {
-    "calories": [420, 380, 390],
-    "duration": [50, 40, 45]
-    }
-
-    #load data into a DataFrame object:
-df = pd.DataFrame(data)
-
-@st.cache
-def convert_df(df):
-            # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv().encode('utf-8')
-
-csv = convert_df(df)
-# from export_functions import write_docx, write_pdf
 
 def download_summarized_article(text: str) -> str:
     article = ""
@@ -87,15 +70,15 @@ if authentication_status:
             sample_dict[i+1] = {'Question': question,
                             'Correct_answers': correct_answers[i],
                             'False_answers': wrong_answers[i]}
-       
+        # print(sample_dict)
         write_docx(sample_dict, 'pytania', highlight_correct=True)
         write_pdf(sample_dict, 'pytania1', highlight_correct=True)
 
-        with open('pytania.pdf', "rb") as f:
-            ste.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania.pdf')
+        with open('pytania1.pdf', "rb") as f:
+            ste.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania1.pdf')
 
         with open('pytania.docx', "rb") as f:
-            ste.download_button('Eksport pytań do pliku pdf.', data=f, file_name='pytania.docx')
+            ste.download_button('Eksport pytań do pliku docx.', data=f, file_name='pytania.docx')
 
 #    st.download_button('Download CSV', f)
 #         ste.download_button('Eksport pytań do pliku pdf.', data=write_pdf(sample_dict, '2', highlight_correct=True), file_name='pytania.pdf')
