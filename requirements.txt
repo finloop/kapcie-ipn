@@ -1,9 +1,12 @@
 fpdf
-docx
+python-docx
 numpy
-docx.shared
 fpdf
 streamlit
-gpt
-streamlit_authenticator
-yaml
+streamlit-authenticator
+PyYAML
+requests
+PyPDF2
+readabilipy
+beautifulsoup4
+openai
